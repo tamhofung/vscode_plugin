@@ -3,7 +3,8 @@
 const vscode = require('vscode');
 const child = require('child_process');
 const axios = require('axios');
-const http = require('http');
+const request = require('request');
+
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
 
@@ -38,15 +39,39 @@ function activate(context) {
 			console.log(content)
 		}
 
-		//vscode.window.showInformationMessage('Document !');
-		
-		const options = {
-			hostname: '127.0.0.1:8000',
-			path: '/items/12',
-			method: 'GET'
-		};
-			
 
+		let document = editor.document;
+
+		const content = document.getText();
+		const url = "http://127.0.0.1:8000/test_post?title=" + content;
+		  
+		  axios({
+			  method: 'POST',
+			  url, 
+			  headers:{'Content-Type': 'application/json; charset=utf-8'}
+		  }) 
+			.then((res) => {
+			  console.log(`statusCode: ${res.status}`)
+			  console.log(res.data)
+			  vscode.window.showInformationMessage("Data:" + JSON.stringify(res.data));
+			})
+			.catch((error) => {
+			  console.error(error)
+			})
+
+
+		//vscode.window.showInformationMessage('Document !');
+		/*
+		let payload = { "title": 'John Doe', "content": 'test1231231' };
+		axios.post('http://127.0.0.1:8000/test_post', payload)
+		.then(response =>  {
+			//vscode.window.showInformationMessage("asdada");
+			//vscode.window.showInformationMessage("Data:" + JSON.stringify(response.data));
+			console.log(response.data);
+		})
+		*/
+
+		/*
 		axios.get('http:127.0.0.1:8000/items/12')
 		.then(response =>  {
 			vscode.window.showInformationMessage("asdada");
@@ -58,22 +83,6 @@ function activate(context) {
 		.catch(error => {
 			console.log(error);
 		});
-		/*
-		const req = http.request(options, (res) => {
-			let data = ''
-			 
-			res.on('data', (chunk) => {
-				data += chunk;
-			});
-			
-			// Ending the response 
-			res.on('end', () => {
-				console.log('Body:', JSON.parse(data))
-			});
-			   
-		}).on("error", (err) => {
-			console.log("Error: ", err)
-		}).end()
 		*/
 	})
 
