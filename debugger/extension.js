@@ -1,9 +1,9 @@
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
 const vscode = require('vscode');
-const child = require('child_process');
+//const child = require('child_process');
 const axios = require('axios');
-const request = require('request');
+//const request = require('request');
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
@@ -31,33 +31,49 @@ function activate(context) {
 	let disposable2 = vscode.commands.registerCommand("extension.getDocument", function () {
 		
 		const editor = vscode.window.activeTextEditor;
+		vscode.window.withProgress({
+			location: vscode.ProgressLocation.Notification
+			//cancellable: false,
+		}, async (progress) => {
 
-		if (editor){
-			let document = editor.document;
+			progress.report({
+				message: `Predicting`,
+			});
 
-			const content = document.getText();
-			console.log(content)
-		}
+			async function postCode(){
+				if (editor){
+					let document = editor.document;
+		
+					const content = document.getText();
+					console.log(content)
+		
+		
+					const url = "http://127.0.0.1:8000/test_post?title=" + content;
+				  
+				  await axios({
+					  method: 'POST',
+					  url, 
+					  headers:{'Content-Type': 'application/json; charset=utf-8'}
+				  }) 
+					.then((res) => {
+					  console.log(`statusCode: ${res.status}`)
+					  console.log(res.data)
+					  console.log(JSON.stringify(JSON.stringify(res.data['title_r'])))
+					  vscode.window.showInformationMessage(res.data['title_r']);
+					})
+					.catch((error) => {
+					  console.error(error)
+					})
+				}
+			}
+			await postCode();
+			//await Promise.resolve();
+		
+			progress.report({ increment: 100 });
+		});
 
 
-		let document = editor.document;
 
-		const content = document.getText();
-		const url = "http://127.0.0.1:8000/test_post?title=" + content;
-		  
-		  axios({
-			  method: 'POST',
-			  url, 
-			  headers:{'Content-Type': 'application/json; charset=utf-8'}
-		  }) 
-			.then((res) => {
-			  console.log(`statusCode: ${res.status}`)
-			  console.log(res.data)
-			  vscode.window.showInformationMessage("Data:" + JSON.stringify(res.data));
-			})
-			.catch((error) => {
-			  console.error(error)
-			})
 
 
 		//vscode.window.showInformationMessage('Document !');

@@ -22,7 +22,7 @@
       },
       {
         "command": "extension.getDocument",
-        "title": "Get Document Text"
+        "title": "Run Defect Detection"
       }
     ]
   },
