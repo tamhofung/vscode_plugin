@@ -46,24 +46,30 @@ function activate(context) {
 		
 					const content = document.getText();
 					console.log(content)
-		
-		
-					const url = "http://127.0.0.1:8000/test_post?title=" + content;
+					if (content == ""){
+						vscode.window.showErrorMessage('Please open your code file first!');
+
+					}
+					else {
+						const url = "http://127.0.0.1:8000/test_post?title=" + content;
 				  
-				  await axios({
-					  method: 'POST',
-					  url, 
-					  headers:{'Content-Type': 'application/json; charset=utf-8'}
-				  }) 
-					.then((res) => {
-					  console.log(`statusCode: ${res.status}`)
-					  console.log(res.data)
-					  console.log(JSON.stringify(JSON.stringify(res.data['title_r'])))
-					  vscode.window.showInformationMessage(res.data['title_r']);
-					})
-					.catch((error) => {
-					  console.error(error)
-					})
+						await axios({
+							method: 'POST',
+							url, 
+							headers:{'Content-Type': 'application/json; charset=utf-8'}
+						}) 
+							.then((res) => {
+							console.log(`statusCode: ${res.status}`)
+							console.log(res.data)
+							console.log(JSON.stringify(res.data['title_r']))
+							vscode.window.showInformationMessage(res.data['title_r']);
+							})
+							.catch((error) => {
+							console.error(error)
+							})
+
+					}
+					
 				}
 			}
 			await postCode();
