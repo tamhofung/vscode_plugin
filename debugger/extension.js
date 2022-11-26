@@ -51,7 +51,7 @@ function activate(context) {
 
 					}
 					else {
-						const url = "http://127.0.0.1:8000/test_post?title=" + content;
+						const url = "http://127.0.0.1:8000/bug-detection?title=" + content;
 				  
 						await axios({
 							method: 'POST',
